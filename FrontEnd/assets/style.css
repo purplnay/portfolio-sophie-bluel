@@ -318,3 +318,15 @@ footer nav ul {
     font-size: 14px;
     font-family: "Work Sans";
 }
+
+.nav-logout {
+    display: none;
+}
+
+.is-authenticated .nav-login {
+    display: none;
+}
+
+.is-authenticated .nav-logout {
+    display: block;
+}
