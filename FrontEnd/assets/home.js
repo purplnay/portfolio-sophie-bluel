@@ -14,6 +14,7 @@ const generateWorkEl = (work) => {
     figcaptionEl.textContent = work.title;
     // Generate the final node
     figureEl.append(imgEl, figcaptionEl);
+    figureEl.setAttribute("data-id", work.id);
 
     return figureEl;
 };
@@ -121,7 +122,7 @@ const setupGalleryModal = (works) => {
     // Create the HTML for works
     const list = document.querySelector("#edit-gallery .work-list");
     const workEls = [];
-    works.forEach((work) => {
+    works.forEach((work, i) => {
         const li = document.createElement("li");
         li.classList.add("work-list-item");
 
@@ -138,6 +139,8 @@ const setupGalleryModal = (works) => {
         li.appendChild(img);
         li.appendChild(deleteButton);
 
+        li.setAttribute("data-id", work.id);
+
         deleteButton.addEventListener("click", () => {
             fetch(`${API}/works/${work.id}`, {
                 method: "DELETE",
@@ -147,9 +150,14 @@ const setupGalleryModal = (works) => {
             })
                 .then((res) => {
                     switch (res.status) {
-                        case 200:
-                            alert("Le travail a été supprimé.");
-                            // @TODO update the dom
+                        case 204:
+                            document
+                                .querySelectorAll(`[data-id="${work.id}"]`)
+                                .forEach((work) => {
+                                    work.remove();
+                                });
+
+                            work.splice(i, 1);
                             break;
                         case 401:
                             alert("Erreur d'authentification.");
