@@ -86,6 +86,120 @@ const render = (works, filters, activeFilter = "Tous") => {
     filtersEl.append(...filterNodes);
 };
 
+/**
+ * Display the modal.
+ */
+const showModal = () => {
+    if (isAuthenticated()) {
+        const modal = document.getElementById("modal");
+        modal.classList.add("visible");
+        document.body.style.maxHeight = "100vh";
+        document.body.style.overflow = "hidden";
+    }
+};
+
+/**
+ * Hide the modal.
+ */
+const hideModal = () => {
+    document.getElementById("modal").classList.remove("visible");
+    document.body.style.maxHeight = "";
+    document.body.style.overflow = "";
+
+    // Reset the view
+    const editGallery = document.getElementById("edit-gallery");
+    const addWork = document.getElementById("add-work");
+    editGallery.style.display = "block";
+    addWork.style.display = "none";
+};
+
+const isModalVisible = () => {
+    return document.getElementById("modal").classList.contains("visible");
+};
+
+const setupGalleryModal = (works) => {
+    // Create the HTML for works
+    const list = document.querySelector("#edit-gallery .work-list");
+    const workEls = [];
+    works.forEach((work) => {
+        const li = document.createElement("li");
+        li.classList.add("work-list-item");
+
+        const img = document.createElement("img");
+        img.src = work.imageUrl;
+        img.alt = work.title;
+
+        const deleteButton = document.createElement("button");
+        const deleteImage = document.createElement("img");
+        deleteImage.src = "./assets/icons/trash.svg";
+        deleteButton.appendChild(deleteImage);
+        deleteButton.classList.add("delete-work");
+
+        li.appendChild(img);
+        li.appendChild(deleteButton);
+
+        deleteButton.addEventListener("click", () => {
+            fetch(`${API}/works/${work.id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+                .then((res) => {
+                    switch (res.status) {
+                        case 200:
+                            alert("Le travail a été supprimé.");
+                            // @TODO update the dom
+                            break;
+                        case 401:
+                            alert("Erreur d'authentification.");
+                            break;
+                        case 500:
+                            alert("Erreur du serveur.");
+                            break;
+                        default:
+                            break;
+                    }
+                })
+                .catch(() => {
+                    alert("Une erreur est survenue.");
+                });
+        });
+
+        workEls.push(li);
+    });
+    list.append(...workEls);
+
+    // Add work button
+    const addWorkButton = document.querySelector(".open-add-work");
+    addWorkButton.addEventListener("click", () => {
+        const editGallery = document.getElementById("edit-gallery");
+        const addWork = document.getElementById("add-work");
+
+        editGallery.style.display = "none";
+        addWork.style.display = "block";
+    });
+};
+
+/**
+ * Set up the modal events
+ */
+const setupModal = () => {
+    modal.addEventListener("click", () => {
+        hideModal();
+    });
+
+    const content = modal.querySelector(".modal-content");
+    content.addEventListener("click", (e) => {
+        e.stopPropagation();
+    });
+
+    const closeButton = modal.querySelector(".button-close");
+    closeButton.addEventListener("click", () => {
+        hideModal();
+    });
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
     const works = [];
     const filters = new Set(["Tous"]);
@@ -106,4 +220,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Render the content
     render(works, filters);
+
+    // Edit work
+    const editButton = document.querySelector(".edit-button");
+
+    setupModal();
+    setupGalleryModal(works);
+    editButton.addEventListener("click", () => {
+        if (isAuthenticated()) {
+            // Open modal
+            showModal();
+        }
+    });
 });

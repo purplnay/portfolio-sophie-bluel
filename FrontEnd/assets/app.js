@@ -30,3 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+const isAuthenticated = () =>
+    document.body.classList.contains("is-authenticated");

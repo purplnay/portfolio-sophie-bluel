@@ -133,13 +133,15 @@ body {
     min-height: 100vh;
 }
 body {
-    max-width: 1140px;
-    margin: auto;
     font-family: "Work Sans";
     font-size: 14px;
+    background-color: #fffef8;
+}
+#page {
+    max-width: 1140px;
+    margin: auto;
     display: flex;
     flex-direction: column;
-    background-color: #fffef8;
 }
 header {
     display: flex;
@@ -218,9 +220,11 @@ main {
 #introduction p {
     margin-bottom: 0.5em;
 }
+#portfolio-header {
+    margin-bottom: 2em;
+}
 #portfolio h2 {
     text-align: center;
-    margin-bottom: 1em;
 }
 .gallery {
     width: 100%;
@@ -264,7 +268,8 @@ main {
     box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-input[type="submit"] {
+input[type="submit"],
+button.primary {
     font-family: "Syne";
     font-weight: 700;
     color: white;
@@ -273,6 +278,14 @@ input[type="submit"] {
     width: 180px;
     text-align: center;
     border-radius: 60px;
+    cursor: pointer;
+}
+
+button.primary {
+    border: none;
+    padding: 1rem 2rem;
+    width: auto;
+    margin: 0;
 }
 
 footer nav ul {
@@ -329,4 +342,144 @@ footer nav ul {
 
 .is-authenticated .nav-logout {
     display: block;
+}
+
+.edit-button {
+    display: none;
+}
+
+.is-authenticated #portfolio-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}
+
+.is-authenticated .edit-button {
+    display: flex;
+    gap: 8px;
+    border: none;
+    background: none;
+    outline: none;
+    font-family: "Work Sans";
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.edition-mode-banner {
+    display: none;
+}
+
+.is-authenticated .edition-mode-banner {
+    display: flex;
+    height: 60px;
+    align-items: center;
+    justify-content: center;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.edition-mode-banner p {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+/* Modal */
+#modal {
+    display: none;
+}
+
+#modal.visible {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+#modal .button-close img {
+    width: 2rem;
+    height: 2rem;
+}
+
+div.modal-content {
+    width: 630px;
+    background-color: #fff;
+    border-radius: 10px;
+    position: relative;
+    padding: 0 30px;
+    text-align: center;
+}
+
+.modal-content .button-close {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.modal-content section:not(.active) {
+    display: none;
+}
+
+.modal-content section {
+    padding: 0 50px;
+}
+
+.modal-content h2 {
+    color: #000000;
+    font-size: 1.75em;
+    font-weight: 400;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+#edit-gallery .work-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    row-gap: 1.5rem;
+    column-gap: 0.8rem;
+}
+
+#edit-gallery .work-list img {
+    width: 100px;
+}
+
+#edit-gallery .work-list-item {
+    position: relative;
+}
+
+#edit-gallery .delete-work {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    background-color: #000000;
+    border-radius: 3px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#edit-gallery .delete-work img {
+    width: 11px;
+}
+
+#edit-gallery hr {
+    opacity: 0.5;
+    margin: 4rem 0 2rem 0;
+}
+
+#add-work form {
 }
