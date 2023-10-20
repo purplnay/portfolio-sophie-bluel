@@ -123,9 +123,24 @@
 
         <div id="modal">
             <div class="modal-content">
-                <button class="button-close" type="button">
-                    <img src="./assets/icons/close.svg" alt="Fermer" />
-                </button>
+                <div class="modal-buttons">
+                    <button class="button-back" type="button">
+                        <img
+                            src="./assets/icons/back.svg"
+                            width="26"
+                            height="26"
+                            alt="Retour"
+                        />
+                    </button>
+                    <button class="button-close" type="button">
+                        <img
+                            src="./assets/icons/close.svg"
+                            width="32"
+                            height="32"
+                            alt="Fermer"
+                        />
+                    </button>
+                </div>
 
                 <section id="edit-gallery" class="active">
                     <h2>Galerie photo</h2>
@@ -143,15 +158,20 @@
 
                     <form action="#" method="post">
                         <div class="image-input-group">
-                            <img src="" alt="" />
-                            <input
-                                id="image-input"
-                                type="file"
-                                accept="image/*"
-                            />
-                            <label for="image-input"
-                                >Selectionner une image</label
-                            >
+                            <img class="preview" src="" alt="" />
+                            <div class="input-controls">
+                                <img
+                                    class="icon"
+                                    src="./assets/icons/photo.svg"
+                                />
+                                <input
+                                    id="image-input"
+                                    type="file"
+                                    accept="image/*"
+                                />
+                                <label for="image-input">+ Ajouter photo</label>
+                                <span class="info">jpg, png : 4mo max</span>
+                            </div>
                         </div>
 
                         <div class="input-group">
@@ -164,7 +184,16 @@
                             <select name="category" id="category"></select>
                         </div>
 
-                        <button type="submit">Valider</button>
+                        <hr />
+
+                        <div>
+                            <button
+                                class="primary validate-add-work"
+                                type="submit"
+                            >
+                                Valider
+                            </button>
+                        </div>
                     </form>
                 </section>
             </div>

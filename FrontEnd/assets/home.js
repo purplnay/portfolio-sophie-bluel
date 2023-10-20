@@ -110,8 +110,10 @@ const hideModal = () => {
     // Reset the view
     const editGallery = document.getElementById("edit-gallery");
     const addWork = document.getElementById("add-work");
+    const backButton = document.querySelector(".modal-buttons .button-back");
     editGallery.style.display = "block";
     addWork.style.display = "none";
+    backButton.style.display = "none";
 };
 
 const isModalVisible = () => {
@@ -178,6 +180,17 @@ const setupGalleryModal = (works) => {
     });
     list.append(...workEls);
 
+    // Back button
+    const backButton = document.querySelector(".modal-buttons .button-back");
+    backButton.addEventListener("click", () => {
+        const editGallery = document.getElementById("edit-gallery");
+        const addWork = document.getElementById("add-work");
+
+        editGallery.style.display = "block";
+        addWork.style.display = "none";
+        backButton.style.display = "none";
+    });
+
     // Add work button
     const addWorkButton = document.querySelector(".open-add-work");
     addWorkButton.addEventListener("click", () => {
@@ -186,6 +199,7 @@ const setupGalleryModal = (works) => {
 
         editGallery.style.display = "none";
         addWork.style.display = "block";
+        backButton.style.display = "block";
     });
 };
 
