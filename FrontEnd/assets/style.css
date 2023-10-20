@@ -464,6 +464,8 @@ div.modal-content {
 
 #edit-gallery .work-list img {
     width: 100px;
+    height: 100%;
+    object-fit: cover;
 }
 
 #edit-gallery .work-list-item {
@@ -507,10 +509,13 @@ div.modal-content {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 180px;
 }
 
 #add-work form .image-input-group .preview {
     display: none;
+    height: 100%;
+    width: auto;
 }
 
 #add-work form .image-input-group .input-controls {

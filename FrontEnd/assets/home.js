@@ -99,6 +99,15 @@ const showModal = () => {
     }
 };
 
+const clearAddWorkInputs = () => {
+    document.getElementById("image-input").value = "";
+    document.getElementById("title").value = "";
+    document.querySelector(
+        "#add-work .image-input-group .preview"
+    ).style.display = "none";
+    document.querySelector("#add-work .input-controls").style.display = "flex";
+};
+
 /**
  * Hide the modal.
  */
@@ -114,15 +123,23 @@ const hideModal = () => {
     editGallery.style.display = "block";
     addWork.style.display = "none";
     backButton.style.display = "none";
+
+    clearAddWorkInputs();
 };
 
 const isModalVisible = () => {
     return document.getElementById("modal").classList.contains("visible");
 };
 
-const setupGalleryModal = (works) => {
-    // Create the HTML for works
-    const list = document.querySelector("#edit-gallery .work-list");
+const addGalleryModalWorks = (works) => {
+    // Empty the list in case we still had works
+    let list = document.querySelector("#edit-gallery .work-list");
+    const parentNode = list.parentNode;
+    list.remove();
+    list = document.createElement("ul");
+    list.classList.add("work-list");
+    parentNode.appendChild(list);
+
     const workEls = [];
     works.forEach((work, i) => {
         const li = document.createElement("li");
@@ -159,7 +176,7 @@ const setupGalleryModal = (works) => {
                                     work.remove();
                                 });
 
-                            work.splice(i, 1);
+                            works.splice(i, 1);
                             break;
                         case 401:
                             alert("Erreur d'authentification.");
@@ -171,7 +188,7 @@ const setupGalleryModal = (works) => {
                             break;
                     }
                 })
-                .catch(() => {
+                .catch((e) => {
                     alert("Une erreur est survenue.");
                 });
         });
@@ -179,6 +196,11 @@ const setupGalleryModal = (works) => {
         workEls.push(li);
     });
     list.append(...workEls);
+};
+
+const setupGalleryModal = (works) => {
+    // Create the HTML for works
+    addGalleryModalWorks(works);
 
     // Back button
     const backButton = document.querySelector(".modal-buttons .button-back");
@@ -189,6 +211,8 @@ const setupGalleryModal = (works) => {
         editGallery.style.display = "block";
         addWork.style.display = "none";
         backButton.style.display = "none";
+
+        clearAddWorkInputs();
     });
 
     // Add work button
@@ -200,6 +224,93 @@ const setupGalleryModal = (works) => {
         editGallery.style.display = "none";
         addWork.style.display = "block";
         backButton.style.display = "block";
+    });
+};
+
+const setupAddPhotoModal = (categories, works) => {
+    // Get the elements
+    const form = document.querySelector("#add-work form");
+    const preview = form.querySelector(".preview");
+    const inputControls = form.querySelector(".input-controls");
+    const imageInput = form.querySelector("#image-input");
+    const categorySelect = form.querySelector("#category");
+
+    // Update preview
+    imageInput.addEventListener("change", () => {
+        const file = imageInput.files.item(0);
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+            // Hide the controls
+            inputControls.style.display = "none";
+            // Show the preview
+            preview.style.display = "block";
+            preview.src = reader.result;
+        });
+
+        // Read the file
+        reader.readAsDataURL(file);
+    });
+
+    // Add categories
+    const options = [];
+    categories.forEach((category) => {
+        const option = document.createElement("option");
+        option.textContent = category.name;
+        option.value = category.id;
+
+        if (!options.find((item) => item.value === option.value)) {
+            options.push(option);
+        }
+    });
+    categorySelect.append(...options);
+
+    // Form submission
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        // Change the category ID from string to int
+        formData.set("category", parseInt(formData.get("category")));
+
+        // Submit
+        fetch(`${API}/works`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+        })
+            .then(async (res) => {
+                let json;
+
+                switch (res.status) {
+                    case 500:
+                        return alert("Une erreur serveur est survenue.");
+                    case 401:
+                        return alert("Vous devez être connecté.");
+                    case 400:
+                        return alert("Formulaire invalide.");
+                    default:
+                        json = await res.json();
+                }
+
+                // Add the work to the page
+                const pageEl = generateWorkEl(json);
+                document.querySelector(".gallery").appendChild(pageEl);
+
+                // Add the work to the modal
+                works.push(json);
+                addGalleryModalWorks(works);
+
+                // Go back to the list
+                hideModal();
+                showModal();
+            })
+            .catch(() => {
+                alert("Une erreur est survenue.");
+            });
     });
 };
 
@@ -248,6 +359,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     setupModal();
     setupGalleryModal(works);
+    setupAddPhotoModal(
+        works.map((work) => work.category),
+        works
+    );
     editButton.addEventListener("click", () => {
         if (isAuthenticated()) {
             // Open modal
